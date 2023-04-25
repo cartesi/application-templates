@@ -10,7 +10,7 @@ FROM node:19-bullseye  as build-stage
 
 WORKDIR /opt/cartesi/dapp
 COPY . .
-RUN yarn install --production && yarn build
+RUN yarn install && yarn build
 
 # runtime stage: produces final image that will be executed
 
