@@ -1,7 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1.4
 FROM --platform=linux/riscv64 cartesi/python:3.10-slim-jammy
 
-LABEL io.cartesi.rollups.sdk_version=0.14.0
+LABEL io.cartesi.rollups.sdk_version=0.15.0
 LABEL io.cartesi.rollups.ram_size=128Mi
 
 RUN <<EOF
@@ -10,7 +10,7 @@ apt-get install -y --no-install-recommends busybox-static=1:1.30.1-7ubuntu3
 rm -rf /var/lib/apt/lists/*
 EOF
 
-COPY --from=sunodo/machine-emulator-tools:0.10.0-ubuntu22.04 / /
+COPY --from=sunodo/machine-emulator-tools:0.11.0-ubuntu22.04 / /
 ENV PATH="/opt/cartesi/bin:${PATH}"
 
 WORKDIR /opt/cartesi/dapp

@@ -6,7 +6,7 @@
 # If any needed dependencies rely on native binaries, you must use 
 # a riscv64 image such as cartesi/node:19-jammy for the build stage,
 # to ensure that the appropriate binaries will be generated.
-FROM node:19-bullseye  as build-stage
+FROM node:20.2.0-bullseye  as build-stage
 
 WORKDIR /opt/cartesi/dapp
 COPY . .
@@ -17,9 +17,9 @@ RUN yarn install && yarn build
 # Here the image's platform MUST be linux/riscv64.
 # Give preference to small base images, which lead to better start-up
 # performance when loading the Cartesi Machine.
-FROM --platform=linux/riscv64 cartesi/node:19-jammy-slim 
+FROM --platform=linux/riscv64 cartesi/node:20.2.0-jammy-slim
 
-LABEL io.cartesi.rollups.sdk_version=0.14.0
+LABEL io.cartesi.rollups.sdk_version=0.15.0
 LABEL io.cartesi.rollups.ram_size=128Mi
 
 RUN <<EOF
@@ -28,7 +28,7 @@ apt-get install -y --no-install-recommends busybox-static=1:1.30.1-7ubuntu3
 rm -rf /var/lib/apt/lists/*
 EOF
 
-COPY --from=sunodo/machine-emulator-tools:0.10.0-ubuntu22.04 / /
+COPY --from=sunodo/machine-emulator-tools:0.11.0-ubuntu22.04 / /
 ENV PATH="/opt/cartesi/bin:${PATH}"
 
 WORKDIR /opt/cartesi/dapp
