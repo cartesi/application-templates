@@ -19,7 +19,7 @@ RUN yarn install && yarn build
 # performance when loading the Cartesi Machine.
 FROM --platform=linux/riscv64 cartesi/node:20.2.0-jammy-slim
 
-LABEL io.cartesi.rollups.sdk_version=0.15.0
+LABEL io.sunodo.sdk_version=0.1.0
 LABEL io.cartesi.rollups.ram_size=128Mi
 
 RUN <<EOF
