@@ -14,7 +14,7 @@ RUN make
 
 FROM --platform=linux/riscv64 riscv64/ubuntu:22.04
 
-LABEL io.cartesi.rollups.sdk_version=0.1.0
+LABEL io.sunodo.sdk_version=0.1.0
 LABEL io.cartesi.rollups.ram_size=128Mi
 
 RUN <<EOF
