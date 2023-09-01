@@ -1,0 +1,48 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+permissions:
+  contents: read
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+jobs:
+  build:
+    name: sunodo build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        template:
+          [
+            cpp,
+            cpp-low-level,
+            go,
+            javascript,
+            lua,
+            python,
+            ruby,
+            rust,
+            typescript,
+          ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: current
+
+      - name: Install Sunodo
+        run: npm install -g @sunodo/cli
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Check system requirements
+        run: sunodo doctor
+
+      - name: Build
+        run: sunodo build
+        working-directory: ${{ matrix.template }}
