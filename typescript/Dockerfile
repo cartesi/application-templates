@@ -6,7 +6,7 @@
 # If any needed dependencies rely on native binaries, you must use 
 # a riscv64 image such as cartesi/node:19-jammy for the build stage,
 # to ensure that the appropriate binaries will be generated.
-FROM node:20.5.1-bullseye  as build-stage
+FROM node:20.8.0-bookworm as build-stage
 
 WORKDIR /opt/cartesi/dapp
 COPY . .
@@ -17,7 +17,7 @@ RUN yarn install && yarn build
 # Here the image's platform MUST be linux/riscv64.
 # Give preference to small base images, which lead to better start-up
 # performance when loading the Cartesi Machine.
-FROM --platform=linux/riscv64 cartesi/node:20.5.1-jammy-slim
+FROM --platform=linux/riscv64 cartesi/node:20.8.0-jammy-slim
 
 LABEL io.sunodo.sdk_version=0.2.0
 LABEL io.cartesi.rollups.ram_size=128Mi
