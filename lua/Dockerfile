@@ -21,7 +21,7 @@ apt-get update
 apt-get install -y --no-install-recommends \
   busybox-static=1:1.30.1-7ubuntu3 \
   ca-certificates=20230311ubuntu0.22.04.1 \
-  curl=7.81.0-1ubuntu1.14 \
+  curl=7.81.0-1ubuntu1.15 \
   liblua5.4-dev=5.4.4-1 \
   lua5.4=5.4.4-1
 curl -fsSL https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.tar.gz \
