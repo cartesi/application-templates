@@ -1,4 +1,4 @@
-# syntax=docker.io/docker/dockerfile:1.4
+# syntax=docker.io/docker/dockerfile:1
 FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 as base
 
 RUN apt-get update

@@ -1,4 +1,4 @@
-# syntax=docker.io/docker/dockerfile:1.4
+# syntax=docker.io/docker/dockerfile:1
 FROM ubuntu:22.04 as build-stage
 
 RUN <<EOF
