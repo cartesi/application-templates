@@ -2,6 +2,7 @@
 FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 as builder
 
 RUN <<EOF
+set -e
 apt-get update
 apt-get install -y --no-install-recommends build-essential=12.9ubuntu3 lua5.4=5.4.4-1 liblua5.4-dev=5.4.4-1 luarocks=3.8.0+dfsg1-1
 rm -rf /var/lib/apt/lists/*
@@ -17,6 +18,7 @@ LABEL io.cartesi.rollups.ram_size=128Mi
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.12.0
 RUN <<EOF
+set -e
 apt-get update
 apt-get install -y --no-install-recommends \
   busybox-static=1:1.30.1-7ubuntu3 \

@@ -7,6 +7,7 @@ ENV RUSTUP_HOME=/usr/local/rustup \
     RUST_VERSION=1.72.0
 
 RUN <<EOF
+set -e
 apt update
 apt install -y --no-install-recommends \
     build-essential=12.9ubuntu3 \
@@ -49,6 +50,7 @@ LABEL io.cartesi.rollups.ram_size=128Mi
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.12.0
 
 RUN <<EOF
+set -e
 apt-get update
 apt-get install -y --no-install-recommends \
     busybox-static=1:1.30.1-7ubuntu3 \
