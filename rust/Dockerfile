@@ -44,20 +44,19 @@ RUN cargo build --release
 
 FROM --platform=linux/riscv64 riscv64/ubuntu:22.04
 
+ARG MACHINE_EMULATOR_TOOLS_VERSION=0.12.0
+ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
+RUN dpkg -i /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
+    && rm /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
+
 LABEL io.sunodo.sdk_version=0.2.0
 LABEL io.cartesi.rollups.ram_size=128Mi
-
-ARG MACHINE_EMULATOR_TOOLS_VERSION=0.12.0
 
 RUN <<EOF
 set -e
 apt-get update
 apt-get install -y --no-install-recommends \
-    busybox-static=1:1.30.1-7ubuntu3 \
-    ca-certificates=20230311ubuntu0.22.04.1 \
-    curl=7.81.0-1ubuntu1.15
-curl -fsSL https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.tar.gz \
-  | tar -C / --overwrite -xvzf -
+    busybox-static=1:1.30.1-7ubuntu3
 rm -rf /var/lib/apt/lists/*
 EOF
 
