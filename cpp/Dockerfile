@@ -4,7 +4,14 @@ FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 as builder
 RUN <<EOF
 set -e
 apt-get update
-apt-get install -y --no-install-recommends autoconf automake ca-certificates curl build-essential libtool wget
+apt-get install -y --no-install-recommends \
+  autoconf \
+  automake \
+  build-essential \
+  ca-certificates \
+  curl \
+  libtool \
+  wget
 rm -rf /var/lib/apt/lists/*
 EOF
 

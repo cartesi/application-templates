@@ -7,7 +7,10 @@ FROM base as builder
 
 RUN <<EOF
 set -e
-apt-get install -y ruby="1:3.0~exp1" ruby-dev="1:3.0~exp1" build-essential=12.9ubuntu3
+apt-get install -y --no-install-recommends \
+  build-essential=12.9ubuntu3 \
+  ruby-dev="1:3.0~exp1" \
+  ruby="1:3.0~exp1"
 rm -rf /var/apt/lists/*
 gem install bundler --no-document
 EOF
