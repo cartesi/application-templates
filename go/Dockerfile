@@ -1,6 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1
 FROM ubuntu:22.04 as build-stage
 
+ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
 apt update
@@ -39,6 +40,7 @@ RUN dpkg -i /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
 LABEL io.sunodo.sdk_version=0.2.0
 LABEL io.cartesi.rollups.ram_size=128Mi
 
+ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
 apt-get update
