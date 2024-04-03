@@ -18,12 +18,12 @@ EOF
 
 FROM --platform=linux/riscv64 riscv64/ubuntu:22.04
 
-ARG MACHINE_EMULATOR_TOOLS_VERSION=0.12.0
+ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
 RUN dpkg -i /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
   && rm /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
 
-LABEL io.sunodo.sdk_version=0.3.0
+LABEL io.sunodo.sdk_version=0.4.0
 LABEL io.cartesi.rollups.ram_size=128Mi
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -34,7 +34,8 @@ apt-get install -y --no-install-recommends \
   busybox-static=1:1.30.1-7ubuntu3 \
   liblua5.4-dev=5.4.4-1 \
   lua5.4=5.4.4-1
-rm -rf /var/lib/apt/lists/*
+rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
+useradd --create-home --user-group dapp
 EOF
 
 COPY --from=builder /usr/local/lib/lua /usr/local/lib/lua
