@@ -9,7 +9,7 @@ permissions:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   build:
-    name: sunodo build
+    name: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,15 +34,15 @@ jobs:
         with:
           node-version: current
 
-      - name: Install Sunodo
-        run: npm install -g @sunodo/cli
+      - name: Install Cartesi CLI
+        run: npm install -g @cartesi/cli
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
       - name: Check system requirements
-        run: sunodo doctor
+        run: cartesi doctor
 
       - name: Build
-        run: sunodo build
+        run: cartesi build
         working-directory: ${{ matrix.template }}

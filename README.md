@@ -1,3 +1,3 @@
-# Sunodo Templates
+# Cartesi Application Templates
 
-Template projects for Sunodo DApps. This repository is used by the Sunodo CLI to create new applications from a specified template project.
+Template projects for Cartesi applications. This repository is used by the Cartesi CLI to create new applications from a specified template project.
