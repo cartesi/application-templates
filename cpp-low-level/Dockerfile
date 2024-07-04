@@ -16,7 +16,7 @@ apt-get install -y --no-install-recommends \
 rm -rf /var/lib/apt/lists/*
 EOF
 
-COPY --from=cartesi/sdk:0.6.0 /opt/riscv /opt/riscv
+COPY --from=cartesi/sdk:0.8.0 /opt/riscv /opt/riscv
 WORKDIR /opt/cartesi/dapp
 COPY . .
 RUN make
@@ -28,7 +28,7 @@ ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHI
 RUN dpkg -i /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
   && rm /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
 
-LABEL io.cartesi.rollups.sdk_version=0.6.0
+LABEL io.cartesi.rollups.sdk_version=0.8.0
 LABEL io.cartesi.rollups.ram_size=128Mi
 
 ARG DEBIAN_FRONTEND=noninteractive
