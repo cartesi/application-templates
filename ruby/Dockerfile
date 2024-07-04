@@ -1,9 +1,9 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 as base
+FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 AS base
 
 RUN apt-get update
 
-FROM base as builder
+FROM base AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF

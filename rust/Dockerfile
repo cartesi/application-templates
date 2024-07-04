@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM ubuntu:22.04 as builder
+FROM ubuntu:22.04 AS builder
 
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \

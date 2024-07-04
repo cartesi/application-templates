@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM ubuntu:22.04 as build-stage
+FROM ubuntu:22.04 AS build-stage
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
