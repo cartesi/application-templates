@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 // The rollup.h header file specifies how the userspace interacts with the Cartesi Rollup device
 // driver.
