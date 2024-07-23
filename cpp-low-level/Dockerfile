@@ -16,7 +16,7 @@ apt-get install -y --no-install-recommends \
 rm -rf /var/lib/apt/lists/*
 EOF
 
-COPY --from=cartesi/sdk:0.6.2 /opt/riscv /opt/riscv
+COPY --from=cartesi/sdk:0.6.2 /include/linux/cartesi /include/linux/cartesi
 WORKDIR /opt/cartesi/dapp
 COPY . .
 RUN make
