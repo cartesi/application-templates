@@ -13,18 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        template:
-          [
-            cpp,
-            cpp-low-level,
-            go,
-            javascript,
-            lua,
-            python,
-            ruby,
-            rust,
-            typescript,
-          ]
+        template: [cpp, go, javascript, lua, python, ruby, rust, typescript]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
