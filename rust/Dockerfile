@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:24.04 AS builder
 
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
@@ -11,10 +11,10 @@ RUN <<EOF
 set -e
 apt update
 apt install -y --no-install-recommends \
-    build-essential=12.9ubuntu3 \
-    ca-certificates=20230311ubuntu0.22.04.1 \
-    g++-riscv64-linux-gnu=4:11.2.0--1ubuntu1 \
-    wget=1.21.2-2ubuntu1
+    build-essential=12.10ubuntu1 \
+    ca-certificates=20240203 \
+    g++-riscv64-linux-gnu=4:13.2.0-7ubuntu1 \
+    wget=1.21.4-1ubuntu4.1
 EOF
 
 RUN set -eux; \
@@ -43,7 +43,11 @@ WORKDIR /opt/cartesi/dapp
 COPY . .
 RUN cargo build --release
 
-FROM --platform=linux/riscv64 ubuntu:22.04
+FROM --platform=linux/riscv64 ubuntu:24.04 AS base
+
+RUN apt-get update
+
+FROM base
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
@@ -56,9 +60,8 @@ LABEL io.cartesi.rollups.ram_size=128Mi
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
-apt-get update
 apt-get install -y --no-install-recommends \
-    busybox-static=1:1.30.1-7ubuntu3
+    busybox-static=1:1.36.1-6ubuntu3.1
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 useradd --create-home --user-group dapp
 EOF
