@@ -30,7 +30,7 @@ COPY src .
 RUN make
 
 # runtime stage: produces final image that will be executed
-FROM --platform=linux/riscv64 riscv64/ubuntu:22.04
+FROM --platform=linux/riscv64 ubuntu:22.04
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
