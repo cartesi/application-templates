@@ -12,7 +12,7 @@ apt-get install -y --no-install-recommends \
   ca-certificates \
   curl \
   libtool \
-  wget 
+  wget
 rm -rf /var/lib/apt/lists/*
 EOF
 
