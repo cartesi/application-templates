@@ -3,7 +3,7 @@
 # build stage: includes resources necessary for installing dependencies
 
 # Here the image's platform does not necessarily have to be riscv64.
-# If any needed dependencies rely on native binaries, you must use 
+# If any needed dependencies rely on native binaries, you must use
 # a riscv64 image such as cartesi/node:20-jammy for the build stage,
 # to ensure that the appropriate binaries will be generated.
 FROM node:20.16.0-bookworm AS build-stage
