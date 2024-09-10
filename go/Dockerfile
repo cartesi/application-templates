@@ -44,7 +44,7 @@ apt install -y --no-install-recommends \
     g++-riscv64-linux-gnu
 EOF
 
-ARG GOVERSION=1.20.5
+ARG GOVERSION=1.23.2
 
 WORKDIR /opt/build
 
