@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -41,13 +41,13 @@ func Handler(response *rollups.FinishResponse) error {
 	case "advance_state":
 		data := new(rollups.AdvanceResponse)
 		if err = json.Unmarshal(response.Data, data); err != nil {
-			return fmt.Errorf("Handler: Error unmarshaling advance:", err)
+			return fmt.Errorf("Handler: Error unmarshaling advance: %s", err)
 		}
 		err = HandleAdvance(data)
 	case "inspect_state":
 		data := new(rollups.InspectResponse)
 		if err = json.Unmarshal(response.Data, data); err != nil {
-			return fmt.Errorf("Handler: Error unmarshaling inspect:", err)
+			return fmt.Errorf("Handler: Error unmarshaling inspect: %s", err)
 		}
 		err = HandleInspect(data)
 	}
@@ -55,9 +55,9 @@ func Handler(response *rollups.FinishResponse) error {
 }
 
 func main() {
-	finish := rollups.FinishRequest{"accept"}
+	finish := rollups.FinishRequest{Status: "accept"}
 
-	for true {
+	for {
 		infolog.Println("Sending finish")
 		res, err := rollups.SendFinish(&finish)
 		if err != nil {
@@ -69,7 +69,7 @@ func main() {
 			infolog.Println("No pending rollup request, trying again")
 		} else {
 
-			resBody, err := ioutil.ReadAll(res.Body)
+			resBody, err := io.ReadAll(res.Body)
 			if err != nil {
 				errlog.Panicln("Error: could not read response body: ", err)
 			}
