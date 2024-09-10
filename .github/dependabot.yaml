@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directories:
+      - "/cpp"
+      - "/cpp-low-level"
+      - "/go"
+      - "/javascript"
+      - "/lua"
+      - "/python"
+      - "/ruby"
+      - "/rust"
+      - "/typescript"
+    schedule:
+      interval: "daily"
