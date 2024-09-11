@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM --platform=linux/riscv64 ubuntu:22.04 AS builder
+FROM --platform=linux/riscv64 ubuntu:24.04 AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
@@ -16,7 +16,7 @@ luarocks install --lua-version=5.4 luasocket 3.1.0-1
 luarocks install --lua-version=5.4 dkjson 2.6-1
 EOF
 
-FROM --platform=linux/riscv64 ubuntu:22.04
+FROM --platform=linux/riscv64 ubuntu:24.04
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
