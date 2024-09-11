@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM ubuntu:22.04 AS build-stage
+FROM ubuntu:24.04 AS build-stage
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
@@ -9,7 +9,8 @@ apt install -y --no-install-recommends \
     build-essential=12.9ubuntu3 \
     ca-certificates \
     g++-riscv64-linux-gnu=4:11.2.0--1ubuntu1 \
-    wget
+    wget \
+    curl
 EOF
 
 ARG GOVERSION=1.20.5
