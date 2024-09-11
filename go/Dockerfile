@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM ubuntu:22.04 AS build-stage
+FROM ubuntu:24.04 AS build-stage
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
@@ -30,7 +30,7 @@ COPY src .
 RUN make
 
 # runtime stage: produces final image that will be executed
-FROM --platform=linux/riscv64 ubuntu:22.04
+FROM --platform=linux/riscv64 ubuntu:24.04
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
