@@ -10,10 +10,12 @@ apt-get install -y --no-install-recommends \
   lua5.4=5.4.4-1 \
   liblua5.4-dev=5.4.4-1 \
   luarocks=3.8.0+dfsg1-1
-rm -rf /var/lib/apt/lists/*
+
+  rm -rf /var/lib/apt/lists/*
 
 luarocks install --lua-version=5.4 luasocket 3.1.0-1
 luarocks install --lua-version=5.4 dkjson 2.6-1
+
 EOF
 
 FROM --platform=linux/riscv64 ubuntu:22.04
