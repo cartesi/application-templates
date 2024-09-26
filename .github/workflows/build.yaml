@@ -20,6 +20,7 @@ jobs:
           - java
           - javascript
           - lua
+          - php
           - python
           - ruby
           - rust
