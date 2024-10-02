@@ -39,7 +39,7 @@ static int open_rollup_device()
     return fd;
 }
 
-static std::string get_ioctl_name(int request)
+static std::string get_ioctl_name(long int request)
 {
     switch (request)
     {
