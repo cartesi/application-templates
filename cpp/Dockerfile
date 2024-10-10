@@ -22,12 +22,8 @@ RUN make
 
 FROM --platform=linux/riscv64 ubuntu:22.04
 
-ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
-ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
-RUN dpkg -i /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
-  && rm /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
-
-LABEL io.cartesi.rollups.sdk_version=0.9.0
+LABEL io.cartesi.rollups.sdk_name=ghcr.io/cartesi/sdk
+LABEL io.cartesi.rollups.sdk_version=pr-82
 LABEL io.cartesi.rollups.ram_size=128Mi
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -39,6 +35,11 @@ apt-get install -y --no-install-recommends \
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 useradd --create-home --user-group dapp
 EOF
+
+ARG MACHINE_EMULATOR_TOOLS_VERSION=0.16.1
+ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
+RUN dpkg -i /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
+  && rm /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
 
 ENV PATH="/opt/cartesi/bin:${PATH}"
 
