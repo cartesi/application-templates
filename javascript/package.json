@@ -2,11 +2,9 @@
   "name": "my-dapp",
   "version": "0.1.0",
   "description": "JS DApp",
-  "dependencies": {
-    "ethers": "^6.7.1"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "esbuild": "^0.19.2"
+    "esbuild": "^0.24.0"
   },
   "scripts": {
     "build": "esbuild ./src/index.js --bundle --outfile=dist/index.js --platform=node --target=node20",
