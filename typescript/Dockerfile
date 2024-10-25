@@ -6,7 +6,7 @@
 # If any needed dependencies rely on native binaries, you must use
 # a riscv64 image such as cartesi/node:20-jammy for the build stage,
 # to ensure that the appropriate binaries will be generated.
-FROM node:20.16.0-bookworm AS build-stage
+FROM --platform=$BUILDPLATFORM node:20.16.0-bookworm AS build-stage
 
 WORKDIR /opt/cartesi/dapp
 COPY . .
@@ -17,7 +17,7 @@ RUN yarn install && yarn build
 # Here the image's platform MUST be linux/riscv64.
 # Give preference to small base images, which lead to better start-up
 # performance when loading the Cartesi Machine.
-FROM --platform=linux/riscv64 cartesi/node:20.16.0-jammy-slim
+FROM cartesi/node:20.16.0-jammy-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF

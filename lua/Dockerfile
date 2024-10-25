@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM --platform=linux/riscv64 ubuntu:22.04 AS builder
+FROM ubuntu:22.04 AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
@@ -16,7 +16,7 @@ luarocks install --lua-version=5.4 luasocket 3.1.0-1
 luarocks install --lua-version=5.4 dkjson 2.6-1
 EOF
 
-FROM --platform=linux/riscv64 ubuntu:22.04
+FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF

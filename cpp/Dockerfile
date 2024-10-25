@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM --platform=linux/riscv64 ubuntu:22.04 AS builder
+FROM ubuntu:22.04 AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
@@ -20,7 +20,7 @@ WORKDIR /opt/cartesi/dapp
 COPY . .
 RUN make
 
-FROM --platform=linux/riscv64 ubuntu:22.04
+FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
