@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM ubuntu:22.04 AS build-stage
+FROM --platform=$BUILDPLATFORM ubuntu:22.04 AS build-stage
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
@@ -30,7 +30,7 @@ COPY src .
 RUN make
 
 # runtime stage: produces final image that will be executed
-FROM --platform=linux/riscv64 ubuntu:22.04
+FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF

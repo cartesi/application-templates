@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM --platform=linux/riscv64 cartesi/python:3.10-slim-jammy
+FROM cartesi/python:3.10-slim-jammy
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
