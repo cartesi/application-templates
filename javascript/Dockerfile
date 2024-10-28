@@ -6,7 +6,7 @@
 # If any needed dependencies rely on native binaries, you must use
 # a riscv64 image such as cartesi/node:20-jammy for the build stage,
 # to ensure that the appropriate binaries will be generated.
-FROM node:20.16.0-bookworm AS build-stage
+FROM node:23.1.0-bookworm AS build-stage
 
 WORKDIR /opt/cartesi/dapp
 COPY . .
