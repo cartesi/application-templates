@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM --platform=linux/riscv64 cartesi/python:3.10-slim-jammy
+FROM --platform=linux/riscv64 cartesi/python:3.11-slim-jammy
 
 ARG MACHINE_EMULATOR_TOOLS_VERSION=0.14.1
 ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
