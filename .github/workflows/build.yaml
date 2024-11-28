@@ -1,30 +1,45 @@
 name: Build
+
 on:
   push:
     branches:
       - main
   pull_request:
+
 permissions:
   contents: read
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}-${{ github.job}}
+
 jobs:
-  build:
-    name: build
+  templates:
+    name: templates-to-build
+    runs-on: ubuntu-latest
+    outputs:
+      allTemplates: ${{ steps.list.outputs.ALL_TEMPLATES }}
+      changedTemplates: ${{ steps.list.outputs.CHANGED_TEMPLATES }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: List templates
+        id: list
+        run: |
+          echo "CHANGED_TEMPLATES=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | awk -F/ '/^[a-z]*\// {print $1}' | sort -u | jq -Rnc '[inputs]')" >> "$GITHUB_OUTPUT"
+          echo "ALL_TEMPLATES=$(find ./ -name Dockerfile | awk -F/ '/^\.\/[a-z]*\// {print $2}' | sort -u | jq -Rnc '[inputs]')" >> "$GITHUB_OUTPUT"
+          cat $GITHUB_OUTPUT
+
+  build-on-main:
+    name: Build main
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && (needs.templates.outputs.allTemplates != '' && toJson(fromjson(needs.templates.outputs.allTemplates)) != '[]') }}
+    needs: templates
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        template:
-          [
-            cpp,
-            cpp-low-level,
-            go,
-            javascript,
-            lua,
-            python,
-            ruby,
-            rust,
-            typescript,
-          ]
+        allTemplates: ${{ fromJson(needs.templates.outputs.allTemplates) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,5 +59,40 @@ jobs:
         run: cartesi doctor
 
       - name: Build
-        run: cartesi build
-        working-directory: ${{ matrix.template }}
+        run: |
+          cartesi build
+          cartesi hash
+        working-directory: ${{ matrix.allTemplates }}
+
+  build-on-pr:
+        name: Build PR
+        if: ${{ github.event_name == 'pull_request' && (needs.templates.outputs.changedTemplates != '' && toJson(fromjson(needs.templates.outputs.changedTemplates)) != '[]') }}
+        needs: templates
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            changedTemplates: ${{ fromJson(needs.templates.outputs.changedTemplates) }}
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: current
+
+          - name: Install Cartesi CLI
+            run: npm install -g @cartesi/cli
+
+          - name: Set up QEMU
+            uses: docker/setup-qemu-action@v3
+
+          - name: Check system requirements
+            run: cartesi doctor
+
+          - name: Build
+            run: |
+              cartesi build
+              cartesi hash
+            working-directory: ${{ matrix.changedTemplates }}
