@@ -1,14 +1,13 @@
 package main
 
 import (
+	"dapp/rollups"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"strconv"
-
-	"dapp/rollups"
 )
 
 var (
@@ -41,13 +40,13 @@ func Handler(response *rollups.FinishResponse) error {
 	case "advance_state":
 		data := new(rollups.AdvanceResponse)
 		if err = json.Unmarshal(response.Data, data); err != nil {
-			return fmt.Errorf("Handler: Error unmarshaling advance: %s", err)
+			return fmt.Errorf("Handler: Error unmarshaling advance: %w", err)
 		}
 		err = HandleAdvance(data)
 	case "inspect_state":
 		data := new(rollups.InspectResponse)
 		if err = json.Unmarshal(response.Data, data); err != nil {
-			return fmt.Errorf("Handler: Error unmarshaling inspect: %s", err)
+			return fmt.Errorf("Handler: Error unmarshaling inspect: %w", err)
 		}
 		err = HandleInspect(data)
 	}
