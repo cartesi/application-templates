@@ -42,6 +42,7 @@ type NoticeRequest struct {
 
 type VoucherRequest struct {
 	Destination string `json:"destination"`
+	Value       string `json:"value"`
 	Payload     string `json:"payload"`
 }
 
