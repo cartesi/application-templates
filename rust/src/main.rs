@@ -35,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut status = "accept";
     loop {
         println!("Sending finish");
-        let response = object! {"status" => status.clone()};
+        let response = object! {"status" => status};
         let request = hyper::Request::builder()
             .method(hyper::Method::POST)
             .header(hyper::header::CONTENT_TYPE, "application/json")

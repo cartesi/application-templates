@@ -4,7 +4,7 @@ FROM --platform=$BUILDPLATFORM ubuntu:22.04 AS builder
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.72.0
+    RUST_VERSION=1.82.0
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
