@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-ARG MACHINE_EMULATOR_TOOLS_VERSION=0.16.1
+ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0-test3
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
@@ -35,12 +35,16 @@ apt-get install -y --no-install-recommends \
 rm -rf /var/lib/apt/lists/*
 EOF
 
-ARG MACHINE_EMULATOR_TOOLS_VERSION
-ADD --checksum=sha256:ac93f0b8b2c8be85e1b3956f3e0206009fbb8c73f9327948a811b1864a2cee8d \
-  https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/libcmt-dev-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
-  /tmp/libcmt-dev-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
-RUN apt-get install -y --no-install-recommends /tmp/libcmt-dev-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
-  && rm /tmp/libcmt-dev-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
+ARG MACHINE_GUEST_TOOLS_VERSION
+ADD https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.tar.gz  /tmp/machine-guest-tools_riscv64.tar.gz
+
+RUN <<EOF
+set -e
+echo "944cb99a021fe94291bbd2682c22cae7be51bc5dc9120f720890ec420dd488f1f92a7fba26d3cc48037f212126de8042e41d3d6bda2c6df0b5d3cc43fe1eb27a /tmp/machine-guest-tools_riscv64.tar.gz" \
+  | sha512sum -c
+tar -C / -xzf /tmp/machine-guest-tools_riscv64.tar.gz
+rm /tmp/machine-guest-tools_riscv64.tar.gz
+EOF
 
 WORKDIR /opt/cartesi/dapp
 COPY . .
@@ -59,15 +63,16 @@ rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 useradd --create-home --user-group dapp
 EOF
 
-ARG MACHINE_EMULATOR_TOOLS_VERSION
-ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/libcmt-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
-  /tmp/libcmt-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
-RUN apt-get install -y --no-install-recommends /tmp/libcmt-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
-  && rm /tmp/libcmt-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
+ARG MACHINE_GUEST_TOOLS_VERSION
+ADD https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.tar.gz  /tmp/machine-guest-tools_riscv64.tar.gz
 
-ADD https://github.com/cartesi/machine-emulator-tools/releases/download/v${MACHINE_EMULATOR_TOOLS_VERSION}/machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb /
-RUN apt-get install -y --no-install-recommends /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
-  && rm /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
+RUN <<EOF
+set -e
+echo "944cb99a021fe94291bbd2682c22cae7be51bc5dc9120f720890ec420dd488f1f92a7fba26d3cc48037f212126de8042e41d3d6bda2c6df0b5d3cc43fe1eb27a /tmp/machine-guest-tools_riscv64.tar.gz" \
+  | sha512sum -c
+tar -C / -xzf /tmp/machine-guest-tools_riscv64.tar.gz
+rm /tmp/machine-guest-tools_riscv64.tar.gz
+EOF
 
 ENV PATH="/opt/cartesi/bin:${PATH}"
 
