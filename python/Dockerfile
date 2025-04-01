@@ -28,7 +28,6 @@ FROM base
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
-apt-get update
 apt-get install -y --no-install-recommends \
   busybox-static
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
