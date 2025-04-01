@@ -1,12 +1,35 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM cartesi/python:3.10-slim-jammy
+
+# This enforces that the packages downloaded from the repositories are the same
+# for the defined date, no matter when the image is built.
+ARG APT_UPDATE_SNAPSHOT=20250127T030400Z
+
+################################################################################
+# riscv64 base stage
+FROM --platform=linux/riscv64 cartesi/python:3.13.2-slim-noble AS base
+
+ARG APT_UPDATE_SNAPSHOT
+ARG DEBIAN_FRONTEND=noninteractive
+RUN <<EOF
+set -eu
+apt-get update
+apt-get install -y --no-install-recommends ca-certificates curl
+apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
+EOF
+
+################################################################################
+# runtime stage: produces final image that will be executed
+
+# Here the image's platform MUST be linux/riscv64.
+# Give preference to small base images, which lead to better start-up
+# performance when loading the Cartesi Machine.
+FROM base
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
-apt-get update
 apt-get install -y --no-install-recommends \
-  busybox-static=1:1.30.1-7ubuntu3
+  busybox-static
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 useradd --create-home --user-group dapp
 EOF
