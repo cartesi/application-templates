@@ -1,0 +1,13 @@
+[[dependencies]]
+name = "coprocessor-adapter"
+version = "2.3.0"
+url = "https://soldeer-revisions.s3.amazonaws.com/coprocessor-adapter/2_3_0_03-04-2025_17:20:17_coprocessor-base-contract.zip"
+checksum = "c9cb63f50d36947dea879dcf4be95bf7f17a605d558aa745a23871c999b92df5"
+integrity = "71f3e4fb7a37754caecbe252859c96f20d6471aa0f14b9dd8719dce4fed8bcb6"
+
+[[dependencies]]
+name = "forge-std"
+version = "1.9.6"
+url = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_9_6_01-02-2025_20:49:10_forge-std-1.9.zip"
+checksum = "55f341818321b3f925161a72fd0dcd62e4a0a4b66785a7a932bf2bfaf96fb9d1"
+integrity = "e9ecdc364d152157431e5df5aa041ffddbe9bb1c1ad81634b1e72df9e23814e8"
