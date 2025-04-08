@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0-test3
+ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0-test6
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
@@ -30,20 +30,22 @@ apt-get install -y --no-install-recommends \
   autoconf \
   automake \
   build-essential \
+  busybox-static \
   libtool \
   pkg-config
 rm -rf /var/lib/apt/lists/*
 EOF
 
 ARG MACHINE_GUEST_TOOLS_VERSION
-ADD https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.tar.gz  /tmp/machine-guest-tools_riscv64.tar.gz
+ADD https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb  /tmp/machine-guest-tools_riscv64.deb
 
 RUN <<EOF
 set -e
-echo "944cb99a021fe94291bbd2682c22cae7be51bc5dc9120f720890ec420dd488f1f92a7fba26d3cc48037f212126de8042e41d3d6bda2c6df0b5d3cc43fe1eb27a /tmp/machine-guest-tools_riscv64.tar.gz" \
+echo "850ddd259832497d122f05da54f91217852d57dd47c24a02efa66a44843b0f9c8c29cd81d3fa6d0f804d4a0b89466af00e619348dde94f23150cfd0f8bc930c8 /tmp/machine-guest-tools_riscv64.deb" \
   | sha512sum -c
-tar -C / -xzf /tmp/machine-guest-tools_riscv64.tar.gz
-rm /tmp/machine-guest-tools_riscv64.tar.gz
+apt-get install -y --no-install-recommends \
+  /tmp/machine-guest-tools_riscv64.deb
+rm /tmp/machine-guest-tools_riscv64.deb
 EOF
 
 WORKDIR /opt/cartesi/dapp
@@ -54,24 +56,22 @@ RUN make
 # runtime stage: produces final image that will be executed
 FROM base
 
+ARG MACHINE_GUEST_TOOLS_VERSION
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
 apt-get install -y --no-install-recommends \
   busybox-static
-rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
-useradd --create-home --user-group dapp
-EOF
 
-ARG MACHINE_GUEST_TOOLS_VERSION
-ADD https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.tar.gz  /tmp/machine-guest-tools_riscv64.tar.gz
-
-RUN <<EOF
-set -e
-echo "944cb99a021fe94291bbd2682c22cae7be51bc5dc9120f720890ec420dd488f1f92a7fba26d3cc48037f212126de8042e41d3d6bda2c6df0b5d3cc43fe1eb27a /tmp/machine-guest-tools_riscv64.tar.gz" \
+cd /tmp
+busybox wget https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb
+echo "850ddd259832497d122f05da54f91217852d57dd47c24a02efa66a44843b0f9c8c29cd81d3fa6d0f804d4a0b89466af00e619348dde94f23150cfd0f8bc930c8 /tmp/machine-guest-tools_riscv64.deb" \
   | sha512sum -c
-tar -C / -xzf /tmp/machine-guest-tools_riscv64.tar.gz
-rm /tmp/machine-guest-tools_riscv64.tar.gz
+apt-get install -y --no-install-recommends \
+  /tmp/machine-guest-tools_riscv64.deb
+rm /tmp/machine-guest-tools_riscv64.deb
+
+rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 EOF
 
 ENV PATH="/opt/cartesi/bin:${PATH}"
