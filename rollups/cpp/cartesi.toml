@@ -1,0 +1,7 @@
+[machine]
+ram-length = "64Mi"
+
+[drives.root]
+builder = "docker"
+dockerfile = "Dockerfile"
+format = "sqfs"

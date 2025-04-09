@@ -34,37 +34,74 @@ rm -rf /var/lib/apt/lists/*
 EOF
 
 WORKDIR /opt/cartesi/dapp
-COPY . .
+COPY 3rdparty ./3rdparty
+COPY dapp.cpp ./
+COPY Makefile ./
 RUN make
 
 ################################################################################
-# runtime stage: produces final image that will be executed
-FROM base
+# chiselled rootfs stage
+FROM base AS chiselled
 
-ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0-test6
-ARG DEBIAN_FRONTEND=noninteractive
+ARG CHISEL_VERSION=1.1.0
 RUN <<EOF
 set -e
-apt-get install -y --no-install-recommends \
-  busybox-static
-
-cd /tmp
-busybox wget https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb
-echo "850ddd259832497d122f05da54f91217852d57dd47c24a02efa66a44843b0f9c8c29cd81d3fa6d0f804d4a0b89466af00e619348dde94f23150cfd0f8bc930c8 /tmp/machine-guest-tools_riscv64.deb" \
-  | sha512sum -c
-apt-get install -y --no-install-recommends \
-  /tmp/machine-guest-tools_riscv64.deb
-rm /tmp/machine-guest-tools_riscv64.deb
-
-rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
+curl -fsSL "https://github.com/canonical/chisel/releases/download/v${CHISEL_VERSION}/chisel_v${CHISEL_VERSION}_linux_riscv64.tar.gz" \
+  -o /tmp/chisel.tar.gz
+echo "ee651e2531d5af81a00629083a2bcd2cc05cae363f244a7d7e1f1f7eed43d9ecf97a5bfb03328716a16fc8f58a7d4dc4 /tmp/chisel.tar.gz" | sha384sum -c
+tar -xvf /tmp/chisel.tar.gz -C /usr/bin/
 EOF
 
-ENV PATH="/opt/cartesi/bin:${PATH}"
+WORKDIR /rootfs
+RUN <<EOF
+chisel cut \
+  --release ubuntu-24.04 \
+  --root /rootfs \
+  --arch riscv64 \
+  base-files_base \
+  base-passwd_data \
+  libgcc-s1_libs \
+  libstdc++6_libs \
+  busybox_bins
+EOF
 
+RUN <<EOF
+set -e
+ln -s /usr/bin/busybox bin/sh
+mkdir -p proc sys dev mnt
+echo "dapp:x:1000:1000::/home/dapp:/bin/sh" >> etc/passwd
+echo "dapp:x:1000:" >> etc/group
+mkdir home/dapp
+chown 1000:1000 home/dapp
+sed -i '/^root/s/bash/sh/g' etc/passwd
+EOF
+
+################################################################################
+# cartesi-guest-tolls installtion
+FROM base AS machine-guest-tools
+ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0-test6
+WORKDIR /rootfs
+RUN <<EOF
+set -e
+curl -fsSL https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.tar.gz \
+  -o /tmp/machine-guest-tools_riscv64.tar.gz
+echo "af8dc6e142a36031bb27128e0f846a03a60a006f33a5d965ee42ba2be822794e7bb0d2db2f0c3717c9f51aff4b46aff1640b9869f0a89ca79ae3469584148355 /tmp/machine-guest-tools_riscv64.tar.gz" | sha512sum -c
+tar -xvzf /tmp/machine-guest-tools_riscv64.tar.gz -C /rootfs
+EOF
+
+################################################################################
+# runtime stage: produces final image that will be executed
+FROM --platform=linux/riscv64 scratch
+
+COPY --from=chiselled /rootfs/ /
+COPY --from=machine-guest-tools /rootfs/ /
+
+ENV PATH="/opt/cartesi/bin:${PATH}"
 WORKDIR /opt/cartesi/dapp
 COPY --from=builder /opt/cartesi/dapp/dapp .
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
+USER dapp
 ENTRYPOINT ["rollup-init"]
 CMD ["/opt/cartesi/dapp/dapp"]
