@@ -15,6 +15,7 @@ jobs:
       matrix:
         framework:
           - rollups
+          - coprocessor
         template:
           - cpp
           - cpp-low-level
