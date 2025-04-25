@@ -44,7 +44,7 @@ EOF
 ################################################################################
 # runtime stage: produces final image that will be executed
 FROM base
-ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0-test6
+ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
@@ -54,7 +54,7 @@ apt-get install -y --no-install-recommends \
 
 cd /tmp
 busybox wget https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb
-echo "850ddd259832497d122f05da54f91217852d57dd47c24a02efa66a44843b0f9c8c29cd81d3fa6d0f804d4a0b89466af00e619348dde94f23150cfd0f8bc930c8 /tmp/machine-guest-tools_riscv64.deb" \
+echo "973943b3a3e40164175da7d7b5b7857642d1277e1fd38be268da12daca5ff458735f93a7ac25b350b3de58b073a25b64c860d9eb92157bfc946b03dd1a345cc9 /tmp/machine-guest-tools_riscv64.deb" \
   | sha512sum -c
 apt-get install -y --no-install-recommends \
   /tmp/machine-guest-tools_riscv64.deb
