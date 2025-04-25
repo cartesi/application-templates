@@ -3,7 +3,7 @@
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
 ARG UBUNTU_TAG=noble-20250404
-ARG APT_UPDATE_SNAPSHOT=20250408T030400Z
+ARG APT_UPDATE_SNAPSHOT=20250424T030400Z
 
 ################################################################################
 # riscv64 base stage
