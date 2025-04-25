@@ -66,7 +66,7 @@ COPY --from=builder /usr/local/share/lua /usr/local/share/lua
 ENV PATH="/opt/cartesi/bin:/opt/cartesi/dapp:${PATH}"
 
 WORKDIR /opt/cartesi/dapp
-COPY . .
+COPY dapp.lua .
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
