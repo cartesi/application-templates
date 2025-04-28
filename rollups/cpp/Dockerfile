@@ -34,7 +34,9 @@ rm -rf /var/lib/apt/lists/*
 EOF
 
 WORKDIR /opt/cartesi/dapp
-COPY . .
+COPY 3rdparty ./3rdparty
+COPY dapp.cpp ./
+COPY Makefile ./
 RUN make
 
 ################################################################################
