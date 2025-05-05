@@ -3,8 +3,8 @@ ARG MACHINE_GUEST_TOOLS_VERSION=0.17.0
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG UBUNTU_TAG=noble-20250404
-ARG APT_UPDATE_SNAPSHOT=20250424T030400Z
+ARG UBUNTU_TAG=noble-20250415.1
+ARG APT_UPDATE_SNAPSHOT=20250501T030400Z
 
 ################################################################################
 # riscv64 base stage
