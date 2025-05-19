@@ -1,2 +1,0 @@
-coprocessor-adapter-2.3.0/=dependencies/coprocessor-adapter-2.3.0/
-forge-std-1.9.6/=dependencies/forge-std-1.9.6/
