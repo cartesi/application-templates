@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        framework:
-          - rollups
-          - coprocessor
         template:
           - cpp
           - cpp-low-level
@@ -44,6 +41,6 @@ jobs:
       - name: Check system requirements
         run: cartesi doctor
 
-      - name: Build ${{ matrix.framework}} ${{ matrix.template }}
+      - name: Build ${{ matrix.template }}
         run: cartesi build
-        working-directory: ${{ matrix.framework}}/${{ matrix.template }}/
+        working-directory: ${{ matrix.template }}
