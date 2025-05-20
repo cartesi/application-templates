@@ -1,6 +1,7 @@
-import fs from "fs";
+import fs from "node:fs";
 import openapiTS, { astToString } from "openapi-typescript";
 import ts from "typescript";
+
 const ADDRESS = ts.factory.createTypeReferenceNode(
   ts.factory.createIdentifier("Address")
 );
@@ -16,11 +17,11 @@ viem types Hex and Address instead of simple strings for some schema properties.
 */
 
 const inputFile =
-  "https://raw.githubusercontent.com/cartesi/openapi-interfaces/refs/tags/v0.9.0/rollup.yaml";
+  "https://raw.githubusercontent.com/cartesi/openapi-interfaces/refs/tags/v0.10.0/rollup.yaml";
 const outputFile = "src/schema.d.ts";
 
 // import types from viem in generated code
-const inject = "import { Address, Hex } from 'viem';\n";
+const inject = "import type { Address, Hex } from 'viem';\n";
 
 console.log(`${inputFile} -> ${outputFile}`);
 openapiTS(inputFile, {
@@ -30,7 +31,8 @@ openapiTS(inputFile, {
       return schemaObject.nullable
         ? ts.factory.createUnionTypeNode([HEX, NULL])
         : HEX;
-    } else if ("format" in schemaObject && schemaObject.format === "address") {
+    }
+    if ("format" in schemaObject && schemaObject.format === "address") {
       // use viem.Address if format is address
       return schemaObject.nullable
         ? ts.factory.createUnionTypeNode([ADDRESS, NULL])
