@@ -1,0 +1,8 @@
+.cartesi
+/dist
+/target/
+/bin/
+/build/
+*.class
+*.jar
+
