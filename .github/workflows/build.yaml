@@ -17,13 +17,13 @@ jobs:
           - cpp
           - cpp-low-level
           - go
+          - java
           - javascript
           - lua
           - python
           - ruby
           - rust
           - typescript
-          - java
     steps:
       - name: Checkout
         uses: actions/checkout@v4
