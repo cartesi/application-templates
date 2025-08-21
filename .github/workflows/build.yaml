@@ -45,3 +45,13 @@ jobs:
       - name: Build ${{ matrix.template }}
         run: cartesi build
         working-directory: ${{ matrix.template }}
+
+      - name: Print cartesi-machine hash
+        run: cartesi hash
+        working-directory: ${{ matrix.template }}
+
+      - name: Upload root.ext2 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.template }}-root.ext2
+          path: ${{ matrix.template }}/.cartesi/root.ext2
