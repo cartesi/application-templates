@@ -43,5 +43,17 @@ jobs:
         run: cartesi doctor
 
       - name: Build ${{ matrix.template }}
-        run: cartesi build
+        run: cartesi build --debug
         working-directory: ${{ matrix.template }}
+
+      - name: Print cartesi-machine hash
+        run: cartesi hash
+        working-directory: ${{ matrix.template }}
+
+      - name: Upload root.ext2 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.template }}-rootfs
+          path: |
+            ${{ matrix.template }}/.cartesi/root.ext2
+            ${{ matrix.template }}/.cartesi/root.tar
