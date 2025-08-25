@@ -2,109 +2,114 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG UBUNTU_TAG=noble-20250910
-ARG APT_UPDATE_SNAPSHOT=20250915T030400Z
+ARG APT_UPDATE_SNAPSHOT=20250908T144407Z
+ARG DEBIAN_TAG=trixie-20250908-slim@sha256:c2880112cc5c61e1200c26f106e4123627b49726375eb5846313da9cca117337
+ARG RUST_VERSION=1.89
 
-################################################################################
-# riscv64 base stage
-FROM --platform=linux/riscv64 ubuntu:${UBUNTU_TAG} AS base-riscv64
-
+# Configure apt to use snapshot.debian.org
+FROM scratch AS apt-config
 ARG APT_UPDATE_SNAPSHOT
-ARG DEBIAN_FRONTEND=noninteractive
-RUN <<EOF
-set -eu
-apt-get update
-apt-get install -y --no-install-recommends ca-certificates curl
-apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
+COPY <<EOF /etc/apt/sources.list.d/debian.sources
+Types: deb
+URIs: http://snapshot.debian.org/archive/debian/${APT_UPDATE_SNAPSHOT}
+Suites: trixie trixie-updates
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: http://snapshot.debian.org/archive/debian-security/${APT_UPDATE_SNAPSHOT}
+Suites: trixie-security
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+
+# Configure apt to accept snapshots for expired suites (security, updates)
+COPY <<EOF /etc/apt/apt.conf.d/10-nocheckvalid
+Acquire::Check-Valid-Until false;
+EOF
+
+# Configure apt to Ignore TLS verify on first apt-get update --snapshot=
+COPY <<EOF /etc/apt/apt.conf.d/99-insecure
+Acquire::https::Verify-Peer false;
+Acquire::https::Verify-Host false;
 EOF
 
 ################################################################################
-# cross base stage
-FROM --platform=$BUILDPLATFORM ubuntu:${UBUNTU_TAG} AS base-cross
+# riscv64 base stage
+FROM --platform=linux/riscv64 debian:${DEBIAN_TAG} AS base
 
-ARG APT_UPDATE_SNAPSHOT
+COPY --link --from=apt-config / /
+
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
-set -eu
+set -e
+
 apt-get update
-apt-get install -y --no-install-recommends ca-certificates curl
-apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
+apt-get install -y --no-install-recommends \
+    ca-certificates
 EOF
 
 ################################################################################
 # cross build stage
-FROM base-cross AS cross-build-stage
+FROM --platform=$BUILDPLATFORM rust:${RUST_VERSION}-slim-trixie AS cross-builder
 
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.82.0
+COPY --link --from=apt-config / /
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
+apt-get update
 apt-get install -y --no-install-recommends \
     build-essential \
+    ca-certificates \
     g++-riscv64-linux-gnu
 EOF
 
-RUN <<EOF
-set -eux
-dpkgArch="$(dpkg --print-architecture)"
-case "${dpkgArch##*-}" in \
-    amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='6aeece6993e902708983b209d04c0d1dbb14ebb405ddb87def578d41f920f56d' ;;
-    armhf) rustArch='armv7-unknown-linux-gnueabihf'; rustupSha256='3c4114923305f1cd3b96ce3454e9e549ad4aa7c07c03aec73d1a785e98388bed' ;;
-    arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='1cffbf51e63e634c746f741de50649bbbcbd9dbe1de363c9ecef64e278dba2b2' ;;
-    i386) rustArch='i686-unknown-linux-gnu'; rustupSha256='0a6bed6e9f21192a51f83977716466895706059afb880500ff1d0e751ada5237' ;;
-    *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;;
-esac
-url="https://static.rust-lang.org/rustup/archive/1.27.1/${rustArch}/rustup-init"
-curl -fsSL -O "$url"
-echo "${rustupSha256} *rustup-init" | sha256sum -c -
-chmod +x rustup-init
-./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}
-rm rustup-init
-chmod -R a+w $RUSTUP_HOME $CARGO_HOME
-rustup --version
-cargo --version
-rustc --version
-EOF
-
-RUN rustup target add riscv64gc-unknown-linux-gnu
-
 WORKDIR /opt/cartesi/dapp
 COPY . .
-RUN cargo build --release
+
+RUN <<EOF
+set -e
+rustup target add riscv64gc-unknown-linux-gnu
+cargo build --release
+EOF
 
 ################################################################################
 # runtime stage: produces final image that will be executed
-FROM base-riscv64
+FROM base
+RUN rm /etc/apt/apt.conf.d/99-insecure
+
+COPY <<EOF /tmp/machine-guest-tools_riscv64.deb.sha512sum
+96625d97354c1cc905a8630f3d715f64b14bc5b89f3e30913d2eb02da3a01f20a7784d32c2ed340ca401dce4d1bc0e6bebfc3fbb3808725225c5793b16fa6ef4 /tmp/machine-guest-tools_riscv64.deb
+EOF
 
 ARG MACHINE_GUEST_TOOLS_VERSION=0.17.1
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
-set -e
+set -eu
+
 apt-get install -y --no-install-recommends \
-    busybox-static
+  busybox-static
 
 cd /tmp
 busybox wget https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb
-echo "96625d97354c1cc905a8630f3d715f64b14bc5b89f3e30913d2eb02da3a01f20a7784d32c2ed340ca401dce4d1bc0e6bebfc3fbb3808725225c5793b16fa6ef4 /tmp/machine-guest-tools_riscv64.deb" \
-    | sha512sum -c
-apt-get install -y --no-install-recommends \
-    /tmp/machine-guest-tools_riscv64.deb
+sha512sum -c /tmp/machine-guest-tools_riscv64.deb.sha512sum
+
+apt-get install -y --no-install-recommends /tmp/machine-guest-tools_riscv64.deb
 rm /tmp/machine-guest-tools_riscv64.deb
 
 # Fix non-determinism issue when installing machine-guest-tools
 cp -a /etc/shadow /etc/shadow-
 
+# Strip non-determinism
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
+apt-get dist-clean
 EOF
 
 ENV PATH="/opt/cartesi/bin:/opt/cartesi/dapp:${PATH}"
 
 WORKDIR /opt/cartesi/dapp
-COPY --from=cross-build-stage /opt/cartesi/dapp/target/riscv64gc-unknown-linux-gnu/release/dapp .
+COPY --from=cross-builder /opt/cartesi/dapp/target/riscv64gc-unknown-linux-gnu/release/dapp .
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
