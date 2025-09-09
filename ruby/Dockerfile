@@ -2,7 +2,7 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG APT_UPDATE_SNAPSHOT=20250811T210202Z
+ARG APT_UPDATE_SNAPSHOT=20250908T144407Z
 ARG RUBY_VERSION=3.4.5
 
 # Configure apt to use snapshot.debian.org
