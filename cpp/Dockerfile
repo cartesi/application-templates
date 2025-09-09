@@ -2,8 +2,8 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG DEBIAN_TAG=trixie-20250811-slim@sha256:c85a2732e97694ea77237c61304b3bb410e0e961dd6ee945997a06c788c545bb
-ARG APT_UPDATE_SNAPSHOT=20250811T210202Z
+ARG DEBIAN_TAG=trixie-20250908-slim@sha256:c2880112cc5c61e1200c26f106e4123627b49726375eb5846313da9cca117337
+ARG APT_UPDATE_SNAPSHOT=20250908T144407Z
 
 # Configure apt to use snapshot.debian.org
 FROM scratch AS apt-config
