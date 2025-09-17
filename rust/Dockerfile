@@ -95,6 +95,9 @@ apt-get install -y --no-install-recommends \
     /tmp/machine-guest-tools_riscv64.deb
 rm /tmp/machine-guest-tools_riscv64.deb
 
+# Fix non-determinism issue when installing machine-guest-tools
+cp -a /etc/shadow /etc/shadow-
+
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 EOF
 
