@@ -29,6 +29,7 @@ RUN apt-get update && \
   echo "973943b3a3e40164175da7d7b5b7857642d1277e1fd38be268da12daca5ff458735f93a7ac25b350b3de58b073a25b64c860d9eb92157bfc946b03dd1a345cc9 /tmp/tools.deb" | sha512sum -c && \
   apt-get install -y /tmp/tools.deb && \
   rm -f /tmp/tools.deb && \
+  cp -a /etc/shadow /etc/shadow- && \
   rm -rf /var/lib/apt/lists/*
 
 # Copy built JAR from Stage 1
