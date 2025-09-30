@@ -2,8 +2,8 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG APT_UPDATE_SNAPSHOT=20250908T144407Z
-ARG DEBIAN_TAG=trixie-20250908-slim@sha256:c2880112cc5c61e1200c26f106e4123627b49726375eb5846313da9cca117337
+ARG APT_UPDATE_SNAPSHOT=20250929T202745Z
+ARG DEBIAN_TAG=trixie-20250929-slim@sha256:1caf1c703c8f7e15dcf2e7769b35000c764e6f50e4d7401c355fb0248f3ddfdb
 ARG MACHINE_GUEST_TOOLS_VERSION=0.17.1
 
 FROM scratch AS machine-guest-tools-checksum
