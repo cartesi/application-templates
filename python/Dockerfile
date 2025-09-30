@@ -2,7 +2,7 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG APT_UPDATE_SNAPSHOT=20250908T144407Z
+ARG APT_UPDATE_SNAPSHOT=20250929T202745Z
 ARG PYTHON_VERSION=3.13.6
 
 # Configure apt to use snapshot.debian.org
