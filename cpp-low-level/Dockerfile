@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-ARG MACHINE_GUEST_TOOLS_VERSION=0.17.1
+ARG MACHINE_GUEST_TOOLS_VERSION=0.17.2
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
@@ -41,7 +41,7 @@ ADD https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_
 
 RUN <<EOF
 set -e
-echo "96625d97354c1cc905a8630f3d715f64b14bc5b89f3e30913d2eb02da3a01f20a7784d32c2ed340ca401dce4d1bc0e6bebfc3fbb3808725225c5793b16fa6ef4 /tmp/machine-guest-tools_riscv64.deb" \
+echo "4af9911a5a76738d526bfc2b5462cf96c9dee98ec8b23f3ca91ac4849d5761765f471b5e2e8779809bc4a26d2799f8e744622864fa549ada5941e21d999ff4be /tmp/machine-guest-tools_riscv64.deb" \
   | sha512sum -c
 apt-get install -y --no-install-recommends \
   /tmp/machine-guest-tools_riscv64.deb
@@ -65,14 +65,11 @@ apt-get install -y --no-install-recommends \
 
 cd /tmp
 busybox wget https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb
-echo "96625d97354c1cc905a8630f3d715f64b14bc5b89f3e30913d2eb02da3a01f20a7784d32c2ed340ca401dce4d1bc0e6bebfc3fbb3808725225c5793b16fa6ef4 /tmp/machine-guest-tools_riscv64.deb" \
+echo "4af9911a5a76738d526bfc2b5462cf96c9dee98ec8b23f3ca91ac4849d5761765f471b5e2e8779809bc4a26d2799f8e744622864fa549ada5941e21d999ff4be /tmp/machine-guest-tools_riscv64.deb" \
   | sha512sum -c
 apt-get install -y --no-install-recommends \
   /tmp/machine-guest-tools_riscv64.deb
 rm /tmp/machine-guest-tools_riscv64.deb
-
-# Fix non-determinism issue when installing machine-guest-tools
-cp -a /etc/shadow /etc/shadow-
 
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 EOF
