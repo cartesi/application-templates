@@ -16,16 +16,15 @@ COPY app/src /app/app/src
 
 RUN ./gradlew --no-daemon shadowJar
 
-
 # ################################################################################
 # # Runtime stage (Cartesi-compatible: linux/riscv64)
-
 FROM --platform=linux/riscv64 eclipse-temurin:21-jre
 
 ARG MACHINE_GUEST_TOOLS_VERSION=0.17.2
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
+apt-get update
 apt-get install -y --no-install-recommends \
   busybox-static
 
@@ -43,7 +42,6 @@ EOF
 # Copy built JAR from Stage 1
 WORKDIR /opt/cartesi/dapp
 COPY --from=build /app/app/build/libs/app.jar ./app.jar
-
 
 ENV PATH="/opt/cartesi/bin:${PATH}"
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
