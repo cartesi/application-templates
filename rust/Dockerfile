@@ -4,6 +4,8 @@
 # for the defined date, no matter when the image is built.
 ARG UBUNTU_TAG=noble-20250910
 ARG APT_UPDATE_SNAPSHOT=20250915T030400Z
+ARG MACHINE_GUEST_TOOLS_VERSION=0.17.2
+ARG MACHINE_GUEST_TOOLS_SHA256SUM=c077573dbcf0cdc146adf14b480bfe454ca63aa4d3e8408c5487f550a5b77a41
 
 ################################################################################
 # riscv64 base stage
@@ -49,6 +51,7 @@ RUN <<EOF
 set -e
 apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     g++-riscv64-linux-gnu
 EOF
 
@@ -84,21 +87,20 @@ RUN cargo build --release
 # runtime stage: produces final image that will be executed
 FROM base-riscv64
 
-ARG MACHINE_GUEST_TOOLS_VERSION=0.17.2
+ARG MACHINE_GUEST_TOOLS_VERSION
+ARG MACHINE_GUEST_TOOLS_SHA256SUM
+ADD --checksum=sha256:${MACHINE_GUEST_TOOLS_SHA256SUM} \
+  https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb \
+  /tmp/machine-guest-tools_riscv64.deb
+
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
 apt-get install -y --no-install-recommends \
-    busybox-static
-
-cd /tmp
-busybox wget https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb
-echo "4af9911a5a76738d526bfc2b5462cf96c9dee98ec8b23f3ca91ac4849d5761765f471b5e2e8779809bc4a26d2799f8e744622864fa549ada5941e21d999ff4be /tmp/machine-guest-tools_riscv64.deb" \
-    | sha512sum -c
-apt-get install -y --no-install-recommends \
+    busybox-static \
     /tmp/machine-guest-tools_riscv64.deb
-rm /tmp/machine-guest-tools_riscv64.deb
 
+rm /tmp/machine-guest-tools_riscv64.deb
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 EOF
 
