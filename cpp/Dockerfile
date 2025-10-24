@@ -14,8 +14,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -eu
 apt-get update
-apt-get install -y --no-install-recommends ca-certificates curl
+apt-get install -y --no-install-recommends ca-certificates
 apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
+apt-get remove -y --purge ca-certificates
+apt-get autoremove -y --purge
 EOF
 
 ################################################################################
@@ -29,6 +31,8 @@ apt-get install -y --no-install-recommends \
   autoconf \
   automake \
   build-essential \
+  ca-certificates \
+  curl \
   libtool
 rm -rf /var/lib/apt/lists/*
 EOF
