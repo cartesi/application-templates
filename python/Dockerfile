@@ -2,8 +2,8 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG APT_UPDATE_SNAPSHOT=20250929T202745Z
-ARG PYTHON_VERSION=3.13.6
+ARG APT_UPDATE_SNAPSHOT=20260203T202745Z
+ARG PYTHON_VERSION=3.14.2
 
 # Configure apt to use snapshot.debian.org
 FROM scratch AS apt-config
@@ -37,15 +37,15 @@ EOF
 # riscv64 base stage
 FROM --platform=linux/riscv64 python:${PYTHON_VERSION}-slim-trixie AS base
 
+SHELL ["/bin/bash", "-eux", "-o", "pipefail", "-c"]
+
 COPY --link --from=apt-config / /
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN <<EOF
-set -e
-
-apt-get update
-apt-get install -y --no-install-recommends \
-    ca-certificates
+RUN <<-EOF
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        ca-certificates
 EOF
 
 ################################################################################
@@ -54,12 +54,10 @@ FROM base AS builder
 RUN rm /etc/apt/apt.conf.d/99-insecure
 
 WORKDIR /opt/cartesi/dapp
-RUN python -m venv /opt/cartesi/dapp/venv
-ENV PATH="/opt/cartesi/dapp/venv/bin:$PATH"
+RUN python -m venv /opt/cartesi/dapp/.venv
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt --no-cache && \
-    find /usr/local/lib -type d -name __pycache__ -exec rm -r {} +
+RUN pip install -r requirements.txt --no-cache
 
 ################################################################################
 # runtime stage: produces final image that will be executed
@@ -73,8 +71,6 @@ EOF
 ARG MACHINE_GUEST_TOOLS_VERSION=0.17.1
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
-set -eu
-
 apt-get install -y --no-install-recommends \
     busybox-static
 
@@ -93,10 +89,11 @@ rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 apt-get dist-clean
 EOF
 
-ENV PATH="/opt/cartesi/dapp/venv/bin:/opt/cartesi/bin:${PATH}"
+ENV PATH="/opt/cartesi/dapp/.venv/bin:/opt/cartesi/bin:${PATH}"
+ENV VIRTUAL_ENV="/opt/cartesi/dapp/.venv"
 
 WORKDIR /opt/cartesi/dapp
-COPY --from=builder /opt/cartesi/dapp/venv ./venv
+COPY --from=builder /opt/cartesi/dapp/.venv ./.venv
 COPY dapp.py .
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
