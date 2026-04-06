@@ -2,8 +2,8 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG UBUNTU_TAG=noble-20260210.1
-ARG APT_UPDATE_SNAPSHOT=20260215T030400Z
+ARG UBUNTU_TAG=noble-20260324
+ARG APT_UPDATE_SNAPSHOT=20260406T030400Z
 ARG MACHINE_GUEST_TOOLS_VERSION=0.17.2
 ARG MACHINE_GUEST_TOOLS_SHA256SUM=c077573dbcf0cdc146adf14b480bfe454ca63aa4d3e8408c5487f550a5b77a41
 ARG RUST_VERSION=1.90.0
