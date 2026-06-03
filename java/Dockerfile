@@ -4,7 +4,7 @@ ARG MACHINE_GUEST_TOOLS_SHA256SUM=c077573dbcf0cdc146adf14b480bfe454ca63aa4d3e840
 
 # ################################################################################
 # Java build stage (host arch)
-FROM eclipse-temurin:21-jdk AS build
+FROM --platform=$BUILDPLATFORM eclipse-temurin:21-jdk-noble AS build
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ RUN ./gradlew --no-daemon shadowJar
 
 # ################################################################################
 # # Runtime stage (Cartesi-compatible: linux/riscv64)
-FROM --platform=linux/riscv64 eclipse-temurin:21-jre
+FROM --platform=linux/riscv64 eclipse-temurin:21-jre-noble
 
 ARG MACHINE_GUEST_TOOLS_VERSION
 ARG MACHINE_GUEST_TOOLS_SHA256SUM
