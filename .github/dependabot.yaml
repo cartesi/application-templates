@@ -13,3 +13,12 @@ updates:
       - "/typescript"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "dependabot"
+    pull-request-branch-name:
+      separator: "/"
