@@ -18,18 +18,17 @@ set -eu
 apt-get update
 apt-get install -y --no-install-recommends ca-certificates
 apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
-apt-get remove -y --purge ca-certificates
-apt-get autoremove -y --purge
 EOF
 
 ################################################################################
 # riscv64 builder stage
 FROM base AS builder
 
+ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
-set -e
-apt-get install -y --no-install-recommends \
+set -eu
+apt-get install -y --no-install-recommends --snapshot=${APT_UPDATE_SNAPSHOT} \
   build-essential \
   liblua5.4-dev \
   lua5.4 \
@@ -50,14 +49,18 @@ ADD --checksum=sha256:${MACHINE_GUEST_TOOLS_SHA256SUM} \
   https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb \
   /tmp/machine-guest-tools_riscv64.deb
 
+  ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
-set -e
-apt-get install -y --no-install-recommends \
+set -eu
+apt-get install -y --no-install-recommends --snapshot=${APT_UPDATE_SNAPSHOT} \
   busybox-static \
   /tmp/machine-guest-tools_riscv64.deb \
   liblua5.4-dev \
   lua5.4
+
+apt-get remove -y --purge ca-certificates
+apt-get autoremove -y --purge
 
 rm /tmp/machine-guest-tools_riscv64.deb
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
