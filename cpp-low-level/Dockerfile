@@ -18,8 +18,6 @@ set -eu
 apt-get update
 apt-get install -y --no-install-recommends ca-certificates
 apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
-apt-get remove -y --purge ca-certificates
-apt-get autoremove -y --purge
 EOF
 
 ARG MACHINE_GUEST_TOOLS_VERSION
@@ -34,10 +32,11 @@ RUN apt-get install -y --no-install-recommends /tmp/machine-guest-tools_riscv64.
 # riscv64 builder stage
 FROM base AS builder
 
+ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
-set -e
-apt-get install -y --no-install-recommends \
+set -eu
+apt-get install -y --no-install-recommends --snapshot=${APT_UPDATE_SNAPSHOT} \
   autoconf \
   automake \
   build-essential \
@@ -55,11 +54,15 @@ RUN make
 # runtime stage: produces final image that will be executed
 FROM base
 
+ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
-set -e
-apt-get install -y --no-install-recommends \
+set -eu
+apt-get install -y --no-install-recommends --snapshot=${APT_UPDATE_SNAPSHOT} \
   busybox-static
+
+apt-get remove -y --purge ca-certificates
+apt-get autoremove -y --purge
 
 rm /tmp/machine-guest-tools_riscv64.deb
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
