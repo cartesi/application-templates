@@ -50,9 +50,9 @@ static int handle_inspect_state_request(cmt_rollup_t *me) {
 
 static int handle_request(cmt_rollup_t *me, cmt_rollup_finish_t *finish, uint64_t *index) {
     switch (finish->next_request_type) {
-        case HTIF_YIELD_REASON_ADVANCE:
+        case HTIF_YIELD_REASON_ADVANCE_STATE:
             return handle_advance_state_request(me, index);
-        case HTIF_YIELD_REASON_INSPECT:
+        case HTIF_YIELD_REASON_INSPECT_STATE:
             return handle_inspect_state_request(me);
         default:
             /* unknown request type */
