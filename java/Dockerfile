@@ -1,6 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
-ARG MACHINE_GUEST_TOOLS_VERSION=0.17.2
-ARG MACHINE_GUEST_TOOLS_SHA256SUM=c077573dbcf0cdc146adf14b480bfe454ca63aa4d3e8408c5487f550a5b77a41
+ARG MACHINE_GUEST_TOOLS_VERSION=0.18.0
+ARG MACHINE_GUEST_TOOLS_SHA256SUM=204d4260defd68e11b957ae1f1b511b6c2c74345c918748be06f592733b72dcd
 
 # ################################################################################
 # Java build stage (host arch)

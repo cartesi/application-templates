@@ -43,7 +43,7 @@ jobs:
         run: cartesi doctor
 
       - name: Build ${{ matrix.template }}
-        run: cartesi build --debug
+        run: cartesi build --verbose
         working-directory: ${{ matrix.template }}
 
       - name: Print cartesi-machine hash
