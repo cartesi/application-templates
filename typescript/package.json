@@ -2,24 +2,20 @@
   "name": "my-dapp",
   "version": "0.1.0",
   "description": "TypeScript DApp",
+  "type": "module",
   "dependencies": {
-    "openapi-fetch": "^0.14.0",
-    "viem": "^2.30.0"
+    "@cartesi/rollup": "^1.0.0-alpha.1"
   },
   "devDependencies": {
     "@types/node": "^22.15.20",
     "esbuild": "^0.25.4",
-    "npm-run-all": "^4",
-    "openapi-typescript": "^7.8.0",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "scripts": {
-    "build": "run-s codegen compile",
-    "codegen": "ts-node schema.ts",
-    "compile": "tsc && esbuild ./src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node20",
-    "start": "ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" ts-node src/index.ts"
+    "build": "tsc --noEmit && esbuild ./src/index.ts --bundle --outfile=dist/index.mjs --platform=node --format=esm --target=node22 --packages=external",
+    "start": "tsx src/index.ts"
   },
   "keywords": [
     "cartesi"

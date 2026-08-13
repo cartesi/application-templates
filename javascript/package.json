@@ -2,13 +2,16 @@
   "name": "my-dapp",
   "version": "0.1.0",
   "description": "JS DApp",
-  "dependencies": {},
+  "type": "module",
+  "dependencies": {
+    "@cartesi/rollup": "^1.0.0-alpha.1"
+  },
   "devDependencies": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.25.0"
   },
   "scripts": {
-    "build": "esbuild ./src/index.js --bundle --outfile=dist/index.js --platform=node --target=node20",
-    "start": "ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" node src/index.js"
+    "build": "esbuild ./src/index.js --bundle --outfile=dist/index.mjs --platform=node --format=esm --target=node22 --packages=external",
+    "start": "node src/index.js"
   },
   "keywords": [
     "cartesi"
