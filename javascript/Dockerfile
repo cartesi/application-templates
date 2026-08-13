@@ -29,8 +29,8 @@ EOF
 FROM base AS deps-stage
 
 WORKDIR /opt/cartesi/dapp
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production && yarn cache clean
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile --prod
 
 ################################################################################
 # build stage: includes resources necessary for building the application
@@ -41,10 +41,10 @@ RUN yarn install --frozen-lockfile --production && yarn cache clean
 FROM --platform=$BUILDPLATFORM node:22.14.0-bookworm AS build-stage
 
 WORKDIR /opt/cartesi/dapp
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 COPY . .
-RUN yarn build
+RUN pnpm build
 
 ################################################################################
 # runtime stage: produces final image that will be executed

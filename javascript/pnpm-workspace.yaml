@@ -1,0 +1,10 @@
+# @cartesi/rollup is a native addon, its build script selects the prebuilt
+# binary of the platform it is installed on.
+allowBuilds:
+  '@cartesi/rollup': true
+  esbuild: true
+
+# @cartesi/rollup is a pre-release published often, so it is exempted from the
+# minimum release age required by pnpm before a package can be installed.
+minimumReleaseAgeExclude:
+  - '@cartesi/rollup'
