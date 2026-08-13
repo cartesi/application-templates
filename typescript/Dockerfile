@@ -20,12 +20,24 @@ apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
 EOF
 
 ################################################################################
-# build stage: includes resources necessary for installing dependencies
+# dependencies stage: installs the dependencies needed at runtime
 
-# Here the image's platform does not necessarily have to be riscv64.
-# If any needed dependencies rely on native binaries, you must use
-# a riscv64 image such as cartesi/node:20-jammy for the build stage,
-# to ensure that the appropriate binaries will be generated.
+# Here the image's platform MUST be linux/riscv64, because @cartesi/rollup is a
+# native addon: the installation selects the prebuilt binary of the platform it
+# runs on. Only production dependencies are installed, the ones used to build
+# the application are installed in the build stage below.
+FROM base AS deps-stage
+
+WORKDIR /opt/cartesi/dapp
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production && yarn cache clean
+
+################################################################################
+# build stage: includes resources necessary for building the application
+
+# Here the image's platform does not necessarily have to be riscv64, because
+# the application code is bundled without its dependencies, which are installed
+# by the stage above.
 FROM --platform=$BUILDPLATFORM node:22.14.0-bookworm AS build-stage
 
 WORKDIR /opt/cartesi/dapp
@@ -49,6 +61,7 @@ ADD --checksum=sha256:${MACHINE_GUEST_TOOLS_SHA256SUM} \
   https://github.com/cartesi/machine-guest-tools/releases/download/v${MACHINE_GUEST_TOOLS_VERSION}/machine-guest-tools_riscv64.deb \
   /tmp/machine-guest-tools_riscv64.deb
 
+ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -eu
@@ -66,9 +79,8 @@ EOF
 ENV PATH="/opt/cartesi/bin:${PATH}"
 
 WORKDIR /opt/cartesi/dapp
+COPY --from=deps-stage /opt/cartesi/dapp/node_modules ./node_modules
 COPY --from=build-stage /opt/cartesi/dapp/dist .
 
-ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
-
 ENTRYPOINT ["rollup-init"]
-CMD ["node", "index.js"]
+CMD ["node", "index.mjs"]
