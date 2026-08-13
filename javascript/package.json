@@ -10,7 +10,7 @@
     "esbuild": "^0.25.0"
   },
   "scripts": {
-    "build": "esbuild ./src/index.js --bundle --outfile=dist/index.mjs --platform=node --format=esm --target=node22 --packages=external",
+    "build": "node build.js",
     "start": "node src/index.js"
   },
   "keywords": [
