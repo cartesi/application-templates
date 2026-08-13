@@ -7,10 +7,10 @@
     "@cartesi/rollup": "^1.0.0-alpha.1"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0"
+    "rolldown": "^1.2.4"
   },
   "scripts": {
-    "build": "node build.js",
+    "build": "rolldown -c",
     "start": "node src/index.js"
   },
   "keywords": [

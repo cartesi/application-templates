@@ -1,7 +1,7 @@
 # JavaScript DApp Template
 
 This is a template for JavaScript Cartesi DApps. It uses node to execute the backend application.
-The application entrypoint is the `src/index.js` file. It is bundled with [esbuild](https://esbuild.github.io), but any bundler can be used.
+The application entrypoint is the `src/index.js` file. It is bundled with [rolldown](https://rolldown.rs), configured in `rolldown.config.js`, but any bundler can be used.
 
 Requests are processed with the [`@cartesi/rollup`](https://cartesi.github.io/rollups-ts/rollup) package, which talks directly to the rollup device of the Cartesi Machine. The package is a pre-release, published under the `alpha` npm tag.
 

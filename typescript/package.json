@@ -8,13 +8,13 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.20",
-    "esbuild": "^0.25.4",
+    "rolldown": "^1.2.4",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "scripts": {
-    "build": "tsc --noEmit && tsx build.ts",
+    "build": "tsc --noEmit && rolldown -c",
     "start": "tsx src/index.ts"
   },
   "keywords": [
