@@ -82,5 +82,5 @@ WORKDIR /opt/cartesi/dapp
 COPY --from=deps-stage /opt/cartesi/dapp/node_modules ./node_modules
 COPY --from=build-stage /opt/cartesi/dapp/dist .
 
-ENTRYPOINT ["rollup-init"]
-CMD ["node", "index.mjs"]
+ENTRYPOINT ["node"]
+CMD ["index.mjs"]

@@ -14,7 +14,7 @@
     "vitest": "^3.1.4"
   },
   "scripts": {
-    "build": "tsc --noEmit && esbuild ./src/index.ts --bundle --outfile=dist/index.mjs --platform=node --format=esm --target=node22 --packages=external",
+    "build": "tsc --noEmit && tsx build.ts",
     "start": "tsx src/index.ts"
   },
   "keywords": [
