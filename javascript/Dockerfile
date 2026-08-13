@@ -75,8 +75,6 @@ rm /tmp/machine-guest-tools_riscv64.deb
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 EOF
 
-ENV PATH="/opt/cartesi/bin:${PATH}"
-
 WORKDIR /opt/cartesi/dapp
 COPY --from=deps-stage /opt/cartesi/dapp/node_modules ./node_modules
 COPY --from=build-stage /opt/cartesi/dapp/dist .
