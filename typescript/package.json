@@ -7,11 +7,10 @@
     "@cartesi/rollup": "^1.0.0-alpha.1"
   },
   "devDependencies": {
-    "@types/node": "^22.15.20",
+    "@types/node": "^22.20.1",
     "rolldown": "^1.2.4",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.4"
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
   },
   "scripts": {
     "build": "tsc --noEmit && rolldown -c",
