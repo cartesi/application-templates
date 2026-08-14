@@ -8,7 +8,7 @@ ARG MACHINE_GUEST_TOOLS_SHA256SUM=204d4260defd68e11b957ae1f1b511b6c2c74345c91874
 
 ################################################################################
 # riscv64 base stage
-FROM --platform=linux/riscv64 cartesi/node:22.14.0-noble-slim AS base
+FROM --platform=linux/riscv64 cartesi/node:24.17.0-noble-slim AS base
 
 ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
@@ -38,7 +38,7 @@ RUN corepack enable pnpm && pnpm install --frozen-lockfile --prod
 # Here the image's platform does not necessarily have to be riscv64, because
 # the application code is bundled without its dependencies, which are installed
 # by the stage above.
-FROM --platform=$BUILDPLATFORM node:22.14.0-bookworm AS build-stage
+FROM --platform=$BUILDPLATFORM node:24.17.0-bookworm AS build-stage
 
 WORKDIR /opt/cartesi/dapp
 
