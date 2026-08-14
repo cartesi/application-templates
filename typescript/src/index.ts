@@ -1,54 +1,27 @@
-import createClient from "openapi-fetch";
-import type { components, paths } from "./schema";
+import {
+  type AdvanceRequest,
+  type InspectRequest,
+  Rollup,
+} from "@cartesi/rollup";
 
-type AdvanceRequestData = components["schemas"]["Advance"];
-type InspectRequestData = components["schemas"]["Inspect"];
-type RequestHandlerResult = components["schemas"]["Finish"]["status"];
-type RollupRequest = components["schemas"]["RollupRequest"];
-type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
-type AdvanceRequestHandler = (
-  data: AdvanceRequestData
-) => Promise<RequestHandlerResult>;
+const rollup = new Rollup();
 
-const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log(`HTTP rollup_server url is ${rollupServer}`);
+const handleAdvance = (request: AdvanceRequest): boolean => {
+  console.log(
+    `Received advance request from ${request.msgSender} with index ${request.index} and payload 0x${request.payload.toString("hex")}`,
+  );
 
-const handleAdvance: AdvanceRequestHandler = async (data) => {
-  console.log(`Received advance request data ${JSON.stringify(data)}`);
-  return "accept";
+  // emit outputs with rollup.emitNotice, rollup.emitVoucher or rollup.emitReport
+  // return false to reject the input
+  return true;
 };
 
-const handleInspect: InspectRequestHandler = async (data) => {
-  console.log(`Received inspect request data ${JSON.stringify(data)}`);
+const handleInspect = (request: InspectRequest): void => {
+  console.log(
+    `Received inspect request with payload 0x${request.payload.toString("hex")}`,
+  );
+
+  // answer inspect requests with rollup.emitReport
 };
 
-const main = async () => {
-  const { POST } = createClient<paths>({ baseUrl: rollupServer });
-  let status: RequestHandlerResult = "accept";
-  while (true) {
-    const { data, response } = await POST("/finish", {
-      body: { status },
-      parseAs: "text",
-    });
-
-    if (response.status === 200 && data) {
-      const request = JSON.parse(data) as RollupRequest;
-      switch (request.request_type) {
-        case "advance_state":
-          status = await handleAdvance(request.data as AdvanceRequestData);
-          break;
-        case "inspect_state":
-          await handleInspect(request.data as InspectRequestData);
-          break;
-      }
-    } else if (response.status === 202) {
-      // no rollup request available
-      console.log(await response.text());
-    }
-  }
-};
-
-main().catch((e) => {
-  console.log(e);
-  process.exit(1);
-});
+await rollup.run({ advance: handleAdvance, inspect: handleInspect });
