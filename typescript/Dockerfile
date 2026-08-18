@@ -2,7 +2,7 @@
 
 # This enforces that the packages downloaded from the repositories are the same
 # for the defined date, no matter when the image is built.
-ARG APT_UPDATE_SNAPSHOT=20260801T030400Z
+ARG APT_UPDATE_SNAPSHOT=20260818T030400Z
 ARG MACHINE_GUEST_TOOLS_VERSION=0.18.0
 ARG MACHINE_GUEST_TOOLS_SHA256SUM=204d4260defd68e11b957ae1f1b511b6c2c74345c918748be06f592733b72dcd
 
