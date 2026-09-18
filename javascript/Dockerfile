@@ -8,7 +8,7 @@ ARG MACHINE_GUEST_TOOLS_SHA256SUM=204d4260defd68e11b957ae1f1b511b6c2c74345c91874
 
 ################################################################################
 # riscv64 base stage
-FROM --platform=linux/riscv64 cartesi/node:22.14.0-noble-slim AS base
+FROM --platform=linux/riscv64 cartesi/node:24.17.0-noble-slim AS base
 
 ARG APT_UPDATE_SNAPSHOT
 ARG DEBIAN_FRONTEND=noninteractive
@@ -20,19 +20,31 @@ apt-get update --snapshot=${APT_UPDATE_SNAPSHOT}
 EOF
 
 ################################################################################
-# build stage: includes resources necessary for installing dependencies
+# dependencies stage: installs the dependencies needed at runtime
 
-# Here the image's platform does not necessarily have to be riscv64.
-# If any needed dependencies rely on native binaries, you must use
-# a riscv64 image such as cartesi/node:20-jammy for the build stage,
-# to ensure that the appropriate binaries will be generated.
-FROM --platform=$BUILDPLATFORM node:22.14.0-bookworm AS build-stage
+# Here the image's platform MUST be linux/riscv64, because @cartesi/rollup is a
+# native addon: the installation selects the prebuilt binary of the platform it
+# runs on. Only production dependencies are installed, the ones used to build
+# the application are installed in the build stage below.
+FROM base AS deps-stage
 
 WORKDIR /opt/cartesi/dapp
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile --prod
+
+################################################################################
+# build stage: includes resources necessary for building the application
+
+# Here the image's platform does not necessarily have to be riscv64, because
+# the application code is bundled without its dependencies, which are installed
+# by the stage above.
+FROM --platform=$BUILDPLATFORM node:24.17.0-bookworm AS build-stage
+
+WORKDIR /opt/cartesi/dapp
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 COPY . .
-RUN yarn build
+RUN pnpm build
 
 ################################################################################
 # runtime stage: produces final image that will be executed
@@ -63,12 +75,9 @@ rm /tmp/machine-guest-tools_riscv64.deb
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 EOF
 
-ENV PATH="/opt/cartesi/bin:${PATH}"
-
 WORKDIR /opt/cartesi/dapp
+COPY --from=deps-stage /opt/cartesi/dapp/node_modules ./node_modules
 COPY --from=build-stage /opt/cartesi/dapp/dist .
 
-ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
-
-ENTRYPOINT ["rollup-init"]
-CMD ["node", "index.js"]
+ENTRYPOINT ["node"]
+CMD ["index.mjs"]
