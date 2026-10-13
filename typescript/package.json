@@ -4,12 +4,12 @@
   "description": "TypeScript DApp",
   "type": "module",
   "dependencies": {
-    "@cartesi/rollup": "^1.0.0-alpha.1"
+    "@cartesi/rollup": "^1.0.0-alpha.3"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
-    "rolldown": "^1.2.4",
-    "tsx": "^4.23.12",
+    "@types/node": "^24.19.2",
+    "rolldown": "^1.2.13",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "scripts": {
@@ -20,5 +20,5 @@
     "cartesi"
   ],
   "license": "MIT",
-  "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1"
+  "packageManager": "pnpm@11.28.5+sha512.484563d30b4c2ad27cb48aa94ff2b302dbcebc8ff6bf28816c2589886e146ce7f76f354f3bc1a438e6f5e9768c302aa0a6f7add8232903cd4cf81426cbc14d9e"
 }
