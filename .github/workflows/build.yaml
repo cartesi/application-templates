@@ -28,16 +28,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - name: Setup Cartesi SDK
+        uses: cartesi/setup-action@2a783a3da2c5ada23c77f86262cf41caee1c88eb # v1.1.1
         with:
-          node-version: current
-
-      - name: Install Cartesi CLI
-        run: npm install -g @cartesi/cli@2.0.0-alpha.34
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
+          cli-version: 2.0.0-alpha.34
+          machine-version: 0.21.0
 
       - name: Check system requirements
         run: cartesi doctor
