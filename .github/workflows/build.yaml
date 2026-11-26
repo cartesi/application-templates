@@ -34,7 +34,7 @@ jobs:
           node-version: current
 
       - name: Install Cartesi CLI
-        run: npm install -g @cartesi/cli@2.0.0-alpha.42
+        run: npm install -g @cartesi/cli@2.0.0-alpha.43
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
